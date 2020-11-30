@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+from flask import Flask, render_template,redirect
+import os
+import pickle
+
+app=Flask(__name__)
+@app.route('/view/<string:pagename>/')
+def  view(pagename):
+        try:
+            os.chdir('pages')
+            os.chdir(pagename)
+            with open('page.html')as p:
+                return render_template('view.html',content=p.read())
+            os.chdir('..')
+            os.chdir('..')
+
+        except FileNotFoundError:
+            return render_template('404.html',page=pagename)
+        @app.route('/')
+def index():
+    return redirect('/view/index/')
+app.run(debug=True)
