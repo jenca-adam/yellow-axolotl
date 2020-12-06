@@ -5,7 +5,8 @@ import sys
 import re
 import colorama
 import os
-import shutil
+import shutil 
+import pickle
 from . import arxiv
 from .steal import steal_bib
 BLUE=colorama.Fore.BLUE
@@ -51,11 +52,11 @@ diacritic_dict={
     "ł":"l",
 }
 
-def loadpage(link):
+def loadpage(link,authorname,path):
     os.chdir(f'{base}/pages')
     linkmatch=re.search(linkstr_pattern,link)
     id=linkmatch.groups()[0]
-    page=arxiv.ArXivPage(id)
+    page=arxiv.ArXivPage(id,path)
     print(f'{BOLD}Start of informative output{RESET}')
     print(page.title)
     print(page.month,page.year)
@@ -83,18 +84,20 @@ def loadpage(link):
     linkmatch=re.search(linkstr_pattern,link)
     linkid=linkmatch.groups()[0]
     print(linkid)
-    print('{YELLOW}Stealing BibTex...{RESET}')
+    print(f'{YELLOW}Stealing BibTex...{RESET}')
     bibtex=steal_bib(linkid,name)
 
     linkstr=f'<a href="https://arxiv.org/abs/{linkid})">In ArXiv</a>'
     pagestring=f'<html><head><title>{name}</title></head><body><h1>Reference</h1>\n\n\t{(", ").join(page.authors)};{page.title};{page.jrefs};{page.month}\b{page.year};\n\n<h1>Abstract</h1> \n{page.abstract}\n\n{linkstr}</body></html>'
-    print(f'{name}/page.md:\n\n{CYAN}{pagestring}{RESET}')
+    print(f'{name}/page.html:\n\n{CYAN}{pagestring}{RESET}')
     print(os.getcwd())
     with open('page.html','w')as f:
         f.write(pagestring)
     with open('bib.bib','w')as f:
         f.write(bibtex)
-    if 'Anna Jenčová' in page.authors  or 'Anna Jencova' in page.authors:
+    with open('meta.pickle','wb')as f:
+        pickle.dump({'authors':page.authors},f)
+    if authorname in page.authors:
         mypath='myown'
     else:
         mypath='notmyown'
@@ -102,30 +105,8 @@ def loadpage(link):
     print(f'page {name} should go to {cmypath}')
     writein=True
     os.chdir('..')
-    if writein:
-        print(f'{MAGENTA}Writing in {cmypath}/{CYAN}page.md{RESET}')
-        print('__________________________________________________')
-        os.chdir(mypath)
-        if mypath=='myown':
-            with open('page.md','a')as f:
-                mylinkstr=f'1. [{name}]({name})\n'
 
-                f.write(mylinkstr)
-            if '-v' in sys.argv:
-                with open('page.md')as f:
-                    print(f.read())
-        else:
-            mylinkstr=f'[{name}]({name}),\n'
-
-            with open('page.md','r')as f:
-                lines=list(f.readlines())
-            alphabetindex=lines.index(f'### {name[0].upper()}\n')+1
-            lines.insert(alphabetindex,mylinkstr)
-            with open('page.md','w')as f:
-                f.writelines(lines)
-            if '-v' in sys.argv:
-                print(*lines)
-        print(f'{GREEN}Done{RESET}')
-        os.chdir(base)
-        return {'status':'OK','response':{'message':'OK'}}
+    print(f'{GREEN}Done{RESET}')
+    os.chdir(base)
+    return {'status':'OK','response':{'message':'OK'}}
    

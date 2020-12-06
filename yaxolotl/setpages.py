@@ -3,7 +3,7 @@ import pickle
 import os
 name=input('Enter your name:')
 with open('meta/meta.pickle','wb')as f:
-    pickle.dump({'name':name},f)
+    pickle.dump({'name':name,'yaxpath':os.getcwd()},f)
 os.chdir('pages')
 os.chdir('index')
 with open('page.html','w')as f:

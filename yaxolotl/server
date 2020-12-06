@@ -16,7 +16,7 @@ def  view(pagename):
 
         except FileNotFoundError:
             return render_template('404.html',page=pagename)
-        @app.route('/')
+@app.route('/')
 def index():
     return redirect('/view/index/')
 app.run(debug=True)
