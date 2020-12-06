@@ -10,7 +10,7 @@ def reconfig(path,author):
         os.chdir(path)
         os.chdir('pages')
 
-        if i not in ['myown', 'notmyown', 'students', 'index', 'refs']:
+        if i not in ['myown', 'notmyown', 'students', 'index', 'refs','.cache']:
             os.chdir(i)
             with open('meta.pickle','rb')as f:
                 filedict=pickle.load(f)
