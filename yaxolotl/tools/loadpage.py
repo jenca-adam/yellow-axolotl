@@ -85,9 +85,9 @@ def loadpage(link,authorname,path):
     linkid=linkmatch.groups()[0]
     print(linkid)
     print(f'{YELLOW}Stealing BibTex...{RESET}')
-    bibtex=steal_bib(linkid,name)
+    bibtex='@'+name+'{\ntitle="'+page.title+'"\nauthor="'+page.strauthors+'"\n'+'eprint="'+page.arxivid+'"\n}'
 
-    linkstr=f'<a href="https://arxiv.org/abs/{linkid})">In ArXiv</a>'
+    linkstr=f'<a href="https://arxiv.org/abs/{linkid}">In ArXiv</a>'
     pagestring=f'<html><head><title>{name}</title></head><body><h1>Reference</h1>\n\n\t{(", ").join(page.authors)};{page.title};{page.jrefs};{page.month}\b{page.year};\n\n<h1>Abstract</h1> \n{page.abstract}\n\n{linkstr}</body></html>'
     print(f'{name}/page.html:\n\n{CYAN}{pagestring}{RESET}')
     print(os.getcwd())

@@ -1,11 +1,14 @@
 from bs4 import BeautifulSoup as bs
-import httplib2
-h=httplib2.Http()
+import requests
+import os
+import ssl
+import pickle
+
 def steal_bib(arxivid,name):
-    resp,cont=h.request(f'https://api.semanticscholar.org/arXiv:{arxivid}')
+    cont=requests.get('https://api.semanticscholar.org/arXiv:'+arxivid).text
     semantic_soup=bs(cont,'html.parser')
     print(cont)
-    bib_cite=semantic_soup.find('pre').text
+    bib_cite=semantic_soup.find('textarea',class_="export-textarea form-control").text
     if not bib_cite:
         bib_cite='@article{'+name+','+'\n'+'}'
     return(bib_cite)

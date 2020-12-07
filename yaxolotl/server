@@ -2,8 +2,11 @@
 from flask import Flask, render_template,redirect
 import os
 import pickle
-
+import tools,tools.meta
+os.system('export PYTHONHTTPSVERIFY=0')
+tools.meta.reconfig()
 app=Flask(__name__)
+home=os.getcwd()
 @app.route('/view/<string:pagename>/')
 def  view(pagename):
         try:
@@ -11,10 +14,11 @@ def  view(pagename):
             os.chdir(pagename)
             with open('page.html')as p:
                 return render_template('view.html',content=p.read())
-            os.chdir('..')
-            os.chdir('..')
+            os.chdir(home)
+
 
         except FileNotFoundError:
+            os.chdir(home)
             return render_template('404.html',page=pagename)
 @app.route('/')
 def index():
